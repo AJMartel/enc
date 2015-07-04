@@ -12,6 +12,20 @@
 
 ###SYNOPSIS
 
+*****************
+DBD is a slightly modified version of SBD
+Shadowinteger’s Backdoor (SBD) is another Netcat variant, with all of the features of the original Netcat plus some new ones. SBD is available for both Windows and *nix, with pre-compiled binaries included in the single g-zipped file from http://security.cycom.se/dl/sbd. This feature alone makes SBD a good candidate to settle on as your Netcat-like utility of choice. If that is not enough reason, it offers encryption like cryptcat, and a respawn option, providing the –L functionality for both Windows and *nix hosts.
+
+You can put a wrapper script around any version of Netcat to cause it to restart on *nix, but with SBD providing that functionality built-in, there is little need for such effort. While the basic operation of SBD remains much the same as the other Netcat-like tools, there are a couple of additional options that could be useful for transferring files.
+
+    SBD allows you to specify the source port via the –p option if you are running in client mode (in server mode, –p specifies the listening port as usual). This feature could allow you to get through a firewall by making the SBD session look like a reply to a friendly protocol such as DNS. Of course, this trick is not going to fool a statefull firewall, but having this increased control never hurts.
+    The –r option allows you to tell SBD to re-spawn after a client disconnect instead of the default Netcat behavior, which is to shut down the server.You can also configure a delay in seconds before re-spawning, this delay could be useful to help slow down any attempts to brute force your listening process. The Windows version of Netcat provides the same functionality via the –L option, while the original *nix version offers no such option. The delay can be set to zero seconds which provides identical behavior to the Windows Netcat –L option.
+    With cryptcat, encryption is enabled by default, even if you do not specify a shared secret key. SBD takes the same approach except encryption can be disabled completely via the –c option (–c off disables encryption, –c on is the default). 
+    Similar to cryptcat, the –k option is used to specify the shared secret key. 
+    Another interesting option is –P, which is used to specify a prefix for incoming data. The original intent seems to be to facilitate SBD as a primitive chat client; however, it could also be useful to provide a sort of data “tag” for the server to log. Take for example, a scenario where you have two or more systems running a custom script you created. You want each system to log a status message so you know the process completed successfully. You could program in a custom message on each host, or grab a variable from the environment, or you could also have SBD add the “tag.” 
+    The only other consideration to be aware of concerns SBD’s behavior after a file transfer is completed. Unlike the original Netcat, SBD closes the connection after the file transfer is completed. This behavior makes the use of the –w option obsolete.
+******************
+
 dbd is a Netcat-clone, designed to be portable and offer strong encryption. It runs on Unix-like operating systems and on Microsoft Win32. dbd features AES-CBC-128 + HMAC-SHA1 encryption (by Christophe Devine), program execution (-e option), choosing source port, continuous reconnection with delay, and some other nice features. dbd supports TCP/IP communication only. Source code and binaries are distributed under the GNU General Public License.
 
 ###COMPILATION
