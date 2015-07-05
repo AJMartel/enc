@@ -33,10 +33,10 @@ BINDIR	:= bin
 
 #################################
 
-out := dbd
-outbg := dbdbg
+out := enc
+outbg := encbg
 
-files = pel.c aes.c sha1.c doexec.c dbd.c
+files = pel.c aes.c sha1.c doexec.c enc.c
 
 #################################
 
