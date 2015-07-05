@@ -1,17 +1,10 @@
-	  d8888b. d8888b. d8888b.
-	  88  `8D 88  `8D 88  `8D
-	  88   88 88oooY' 88   88
-	  88   88 88~~~b. 88   88
-	  88  .8D 88   8D 88  .8D
-	  Y8888D' Y8888P' Y8888D'
-
-#[Durandal's Backdoor](http://gitbrew.org/dbd)
-#Copyright (C) 2013 Kyle Barnthouse [<kbarnthouse@hephaestussec.com>](mailto:kbarnthouse@hephaestussec.com)
-#dbd is distributed under the GNU GPL
+Encrypted Netcat
 
 
 ###SYNOPSIS
-
+#[Durandal's Backdoor](http://gitbrew.org/dbd)
+#Copyright (C) 2013 Kyle Barnthouse [<kbarnthouse@hephaestussec.com>](mailto:kbarnthouse@hephaestussec.com)
+#dbd is distributed under the GNU GPL
 *****************
 DBD is a slightly modified version of SBD
 Shadowinteger’s Backdoor (SBD) is another Netcat variant, with all of the features of the original Netcat plus some new ones. SBD is available for both Windows and *nix, with pre-compiled binaries included in the single g-zipped file from http://security.cycom.se/dl/sbd. This feature alone makes SBD a good candidate to settle on as your Netcat-like utility of choice. If that is not enough reason, it offers encryption like cryptcat, and a respawn option, providing the –L functionality for both Windows and *nix hosts.
