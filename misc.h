@@ -222,10 +222,11 @@ void message_box_usage(void) {
     char buf[2048];
 
     snprintf(buf, sizeof(buf),
-        "dbd %s Copyright (C) 2013 Kyle Barnthouse <durandal@gitbrew.org>\n"
+        "enc (Encrypted NetCat) v%s\n"
+        "\"AES-CBC-128 + HMAC-SHA1 encryption\" implementation by Christophe Devine\n"
         "\n"
-        "connect (tcp):dbdbg.exe [-options] host port\n"
-        "listen (tcp): dbdbg.exe -l -p port [-options]\n"
+        "connect (tcp):encbg.exe [-options] host port\n"
+        "listen (tcp): encbg.exe -l -p port [-options]\n"
         "-l : listen for incoming connection\n"
         "-p : choose port to listen on, or source port to connect from\n"
     	"-a : choose address to listen on or connect out from\n"
@@ -240,7 +241,7 @@ void message_box_usage(void) {
         "win32 specific options:\n"
         "-D on|off : turn on/off whether to detach from the console. default is: -D %s\n"
         "-X on|off : turn on/off conversion of LF/CR to CR+LF (only for -e). default is: -X %s\n"
-        "-1 on|off : turn on/off whether to run only one instance of dbd or not. default is: -1 %s\n",
+        "-1 on|off : turn on/off whether to run only one instance of enc or not. default is: -1 %s\n",
         get_revision(rcsid),
         on_or_off(use_encryption),
         on_or_off(daemonize),
@@ -248,14 +249,14 @@ void message_box_usage(void) {
         on_or_off(only_one_instance));
 
     if (!quiet)
-        MessageBox(NULL, buf, "dbd usage", MB_OK);
+        MessageBox(NULL, buf, "enc usage", MB_OK);
 
     return;
 }
 
 /* error MessageBox */
 void errbox(char *msg) {
-    MessageBox(NULL, msg, "dbd", MB_OK | MB_ICONERROR);
+    MessageBox(NULL, msg, "enc", MB_OK | MB_ICONERROR);
     return;
 }
 
@@ -283,7 +284,7 @@ void displayAmbitiousErrbox(char *prefix, DWORD err) {
 
 /* info MessageBox */
 void infobox(char *msg) {
-    MessageBox(NULL, msg, "dbd", MB_OK | MB_ICONINFORMATION);
+    MessageBox(NULL, msg, "enc", MB_OK | MB_ICONINFORMATION);
     return;
 }
 
@@ -291,7 +292,7 @@ void infobox(char *msg) {
 void wsaerrbox(char *msg, DWORD wsaerr) {
     char buf[256];
     snprintf(buf, sizeof(buf), "%s: %s", msg, WSAstrerror(wsaerr));
-    MessageBox(NULL, buf, "dbd", MB_OK | MB_ICONERROR);
+    MessageBox(NULL, buf, "enc", MB_OK | MB_ICONERROR);
     return;
 }
 
@@ -300,12 +301,12 @@ void verbox(void) {
     char buf1[1024];
     char buf2[16];
 
-    snprintf(buf1, sizeof(buf1), "dbd %s Copyright (C) 2013 Kyle Barnthouse <durandal@gitbrew.org>\n"
+    snprintf(buf1, sizeof(buf1), "enc %s Copyright (C) 2015 A.J. Martel <dev@martel.srsly.ca>\n"
            "%s\n"
-           "http://gitbrew.org\n"
-           "dbd is distributed under the GNU General Public License v2",
+           "http://martel.srsly.ca/forensics/\n"
+           "enc is distributed under the GNU General Public License v2",
            get_revision(rcsid), rcsid);
-    snprintf(buf2, sizeof(buf2), "dbd %s", get_revision(rcsid));
+    snprintf(buf2, sizeof(buf2), "enc v%s", get_revision(rcsid));
 
     MessageBox(NULL, buf1, buf2, MB_OK | MB_ICONINFORMATION);
 
@@ -329,7 +330,7 @@ static VOID messagebox_thread(LPVOID Parameter) {
     char buf[512];
     strncpy(buf, mbs->msg, sizeof(buf));
     mbs->thread_lock = 0;
-    MessageBox(NULL, buf, "dbd", MB_OK);
+    MessageBox(NULL, buf, "enc", MB_OK);
     ExitThread(0);
 }
 
@@ -388,14 +389,13 @@ void forkmsgbox(char *msg, int length) {
  * print_banner() prints version and copyright info
  */
 void print_version(void) {
-    printf("dbd %s Copyright (C) 2013 Kyle Barnthouse <durandal@gitbrew.org>\n"
-           "%s\n"
+    printf("enc (Encrypted NetCat) v%s\n"
+           "\"AES-CBC-128 + HMAC-SHA1 encryption\" implementation by Christophe Devine\n"
            "\n"
-           "This program is free software; you can redistribute it and/or modify it under\n"
-           "the terms of the GNU General Public License as published by the Free Software\n"
-           "Foundation; either version 2 of the License, or (at your option) any later\n"
-           "version.\n",
-           get_revision(rcsid), rcsid);
+           "This program is free software; you can redistribute it and/or modify it\n"
+           "under the terms of the GNU General Public License version 2\n"
+           "as published by the Free Software Foundation.\n",
+           get_revision(rcsid));
     return;
 }
 
@@ -408,69 +408,72 @@ char *on_or_off(int boolean) {
 }
 
 /*
- * usage() prints dbd syntax/usage info
+ * usage() prints enc syntax/usage info
  */
 void usage(void) {
     print_version();
     printf(
 "\n"
-"connect (tcp): dbd [-options] host port\n"
-"listen (tcp):  dbd -l -p port [-options]\n"
+"connect (tcp): enc [-options] host port\n"
+"listen (tcp):  enc -l -p port [-options]\n"
 "options:\n"
 "    -l          listen for incoming connection\n"
 "    -p n        choose port to listen on, or source port to connect out from\n"
 "    -a address  choose an address to listen on or connect out from\n"
-"    -e prog     program to execute after connect (e.g. -e cmd.exe or -e bash)\n"
-"    -r n        infinitely respawn/reconnect, pause for n seconds between\n"
-"                connection attempts. -r0 can be used to re-listen after\n"
-"                disconnect (just like a regular daemon)\n"
-"    -c on|off   encryption on/off. specify whether you want to use the built-in\n"
-"                AES-CBC-128 + HMAC-SHA1 encryption implementation (by\n"
-"                Christophe Devine - http://www.cr0.net:8040/) or not\n"
+"    -e prog     program to execute after connect\n"
+"                (ie. -e cmd.exe or -e bash)\n"
+"    -r n        infinitely respawn/reconnect,\n"
+"                pause for n seconds between connection attempts.\n"
+"                -r0 can be used to re-listen after disconnect\n"
+"                (just like a regular daemon)\n"
+"    -c on|off   encryption on/off.\n"
+"                specify whether you want to use the built-in\n"
+"                AES-CBC-128 + HMAC-SHA1 encryption implementation or not\n"
 "                default is: -c %s\n"
-"    -k secret   override default phrase to use for encryption (secret must be\n"
-"                shared between client and server)\n"
+"    -k secret   override default phrase to use for encryption \n"
+"                (secret must be shared between client and server)\n"
 "    -q          hush, quiet, don't print anything (overrides -v)\n"
 "    -v          be verbose\n"
-"    -n          toggle numeric-only IP addresses (don't do DNS resolution). if\n"
-"                you specify -n twice, original state will be active (i.e. -n\n"
-"                works like a on/off switch)\n"
-"    -m          toggle monitoring (snooping) on/off (only used with the -e\n"
-"                option). snooping can also be turned on by specifying -vv (-v\n"
-"                two times)\n"
+"    -n          toggle numeric-only IP addresses (don't do DNS resolution).\n"
+"                if you specify -n twice, original state will be active\n"
+"                (i.e. -n works like a on/off switch)\n"
+"    -m          toggle monitoring (snooping) on/off\n"
+"                (only used with the -e option).\n"
+"                snooping can also be turned on by specifying -vv (-v two times)\n"
 "    -P prefix   add prefix (+ a hardcoded separator) to all outbound data.\n"
-"                this option is mostly only useful for dbd in \"chat mode\" (to\n"
-"                prefix lines you send with your nickname)\n"
+"                this option is mostly only useful for enc in \"chat mode\"\n"
+"                (to prefix lines you send with your nickname)\n"
 "    -H on|off   highlight incoming data with a hardcoded (color) escape\n"
-"                sequence (for e.g. chatting). default is: -H %s\n"
-"    -V          print version banner and exit (include that output in your\n"
-"                bug report and send bug report to michel.blomgren@tigerteam.se)\n"
+"                sequence (ie. chatting).\n"
+"                default is: -H %s\n"
+"    -V          print version banner and exit\n"
 #ifdef WIN32
-"win32 specific options:\n"
+//"win32 specific options:\n"
 "    -D on|off   detach from console (FreeConsole()) (on=yes or off=no)\n"
 "                default is: -D %s\n"
 "    -X on|off   when using the -e option, translate incoming bare LFs or CRs\n"
 "                to CR+LF (this must be on if you're executing command.com on\n"
 "                Win9x). default is: -X %s\n"
-"    -1 on|off   whether to make dbd run only one instance of itself or not.\n"
+"    -1 on|off   whether to make enc run only one instance of itself or not.\n"
 "                instance check is implemented using CreateSemaphore() (with an\n"
 "                initcount and maxcount of 1) and WaitForSingleObject(). if\n"
 "                WaitForSingleObject() returns WAIT_TIMEOUT we assume there's\n"
 "                already an instance running. default is: -1 %s\n"
 "note: when receiving files under win32, always use something like this:\n"
-"C:\\>dbd -lvp 1234 < NUL > outfile.ext\n",
+"C:\\>enc -lvp 1234 < NUL > outfile.ext\n",
         on_or_off(use_encryption),
         on_or_off(highlight_incoming),
         on_or_off(daemonize),
         on_or_off(convert_to_crlf),
         on_or_off(only_one_instance));
 #else
-"unix-like OS specific options:\n"
-"    -s          invoke a shell, nothing else. if dbd is setuid 0, it'll invoke\n"
-"                a root shell\n"
+//"unix-like OS specific options:\n"
+"    -s          invoke a shell, nothing else. if enc is setuid 0,\n"
+"                it'll invoke a root shell\n"
 "    -w n        \"immobility timeout\" in seconds for idle read/write operations\n"
 "                and program execution (the -e option)\n"
-"    -D on|off   fork and run in background (daemonize). default: -D %s\n",
+"    -D on|off   fork and run in background (daemonize).\n"
+"                default: -D %s\n",
         on_or_off(use_encryption),
         on_or_off(highlight_incoming),
         on_or_off(daemonize));
@@ -480,4 +483,3 @@ void usage(void) {
 }
 
 #endif
-
