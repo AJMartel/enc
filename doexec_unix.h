@@ -46,7 +46,7 @@ extern char highlight_prefix[];
 extern char highlight_suffix[];
 
 /*
-    this doexec() handles execution for dbd on Unix-like operating systems.
+    this doexec() handles execution for enc on Unix-like operating systems.
     there are really 3 implementations: 1) if encryption is used, a parent
     process is handling encryption/decryption for the child, pipes are used
     for communication between the running program's process and the polling
